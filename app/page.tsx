@@ -1,12 +1,95 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { Logo } from "./components/Logo";
 
 export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    setLoaded(true);
+  }, []);
+
+  // LegalAI Brand Colors
+  const colors = {
+    background: "#FAFAF8",
+    foreground: "#0F172A",
+    card: "#FFFFFF",
+    secondary: "#F1F5F9",
+    muted: "#64748B",
+    border: "#E2E8F0",
+    slateWarm: "#475569",
+    gold: "#D4A574",
+    goldLight: "#FEF3E7",
+    accentText: "#92400E",
+    navy: "#0F172A",
+    navyLight: "#1E293B",
+    success: "#10B981",
+    warning: "#F59E0B",
+    error: "#EF4444",
+  };
+
+  // Animation styles
+  const fadeUp = (delay: number) => ({
+    opacity: loaded ? 1 : 0,
+    transform: loaded ? "translateY(0)" : "translateY(30px)",
+    transition: `all 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s`,
+  });
+
+  const fadeIn = (delay: number) => ({
+    opacity: loaded ? 1 : 0,
+    transition: `opacity 0.6s ease ${delay}s`,
+  });
+
+  const scaleIn = (delay: number) => ({
+    opacity: loaded ? 1 : 0,
+    transform: loaded ? "scale(1)" : "scale(0.95)",
+    transition: `all 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s`,
+  });
+
+  const slideInRight = (delay: number) => ({
+    opacity: loaded ? 1 : 0,
+    transform: loaded ? "translateX(0)" : "translateX(40px)",
+    transition: `all 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s`,
+  });
 
   return (
-    <main style={{ minHeight: "100vh", background: "#0c0a09" }}>
+    <main style={{ minHeight: "100vh", background: colors.navy, overflow: "hidden" }}>
+      {/* Keyframe animations via style tag */}
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        @keyframes pulse-glow {
+          0%, 100% { box-shadow: 0 0 20px rgba(212, 165, 116, 0.3); }
+          50% { box-shadow: 0 0 40px rgba(212, 165, 116, 0.5); }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+        @keyframes typing {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+        .float-animation { animation: float 4s ease-in-out infinite; }
+        .pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+        .shimmer-text {
+          background: linear-gradient(90deg, #D4A574 0%, #F5D799 50%, #D4A574 100%);
+          background-size: 200% auto;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: shimmer 3s linear infinite;
+        }
+        .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.15); }
+        .hover-scale { transition: transform 0.2s ease; }
+        .hover-scale:hover { transform: scale(1.02); }
+      `}</style>
+
       {/* ══════════════════════════════════════════════════════════════════════
           HEADER
           ══════════════════════════════════════════════════════════════════════ */}
@@ -18,6 +101,7 @@ export default function Home() {
           right: 0,
           zIndex: 1000,
           padding: "12px 24px",
+          ...fadeUp(0.1),
         }}
       >
         <div
@@ -25,86 +109,57 @@ export default function Home() {
             maxWidth: 1200,
             margin: "0 auto",
             padding: "14px 28px",
-            background: "rgba(12, 10, 9, 0.85)",
+            background: "rgba(15, 23, 42, 0.85)",
             backdropFilter: "blur(20px)",
             border: "1px solid rgba(255,255,255,0.08)",
             borderRadius: 16,
           }}
         >
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <a href="#" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-              <div
-                style={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: 10,
-                  background: "linear-gradient(135deg, #d4a85c 0%, #b8860b 100%)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxShadow: "0 4px 12px rgba(212, 168, 92, 0.3)",
-                }}
-              >
-                <span style={{ color: "white", fontWeight: 700, fontSize: 17 }}>A</span>
-              </div>
-              <span className="font-display" style={{ fontSize: 24, color: "#fafaf9", letterSpacing: "-0.02em" }}>
-                Aliva
-              </span>
-            </a>
+            <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
+              <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+                <Logo className="h-20 w-auto" />
+              </Link>
 
-            <nav style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              {["Product", "Workflows", "Security", "Pricing"].map((item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
+              <nav style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              {[
+                { name: "Features", href: "/features" },
+                { name: "Security", href: "#security" },
+                { name: "Pricing", href: "/pricing" },
+              ].map((item, i) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="hover-scale"
                   style={{
                     fontSize: 14,
                     fontWeight: 500,
-                    color: "#a8a29e",
+                    color: "#FAFAFA",
                     textDecoration: "none",
                     padding: "8px 16px",
                     borderRadius: 8,
-                    transition: "all 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "#fafaf9";
-                    e.currentTarget.style.background = "rgba(255,255,255,0.05)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = "#a8a29e";
-                    e.currentTarget.style.background = "transparent";
+                    ...fadeIn(0.2 + i * 0.05),
                   }}
                 >
-                  {item}
-                </a>
+                  {item.name}
+                </Link>
               ))}
-            </nav>
+              </nav>
+            </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <a
+                            <a
                 href="#"
-                style={{
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: "#a8a29e",
-                  textDecoration: "none",
-                  padding: "8px 16px",
-                }}
-              >
-                Sign in
-              </a>
-              <a
-                href="#"
+                className="hover-lift"
                 style={{
                   fontSize: 14,
                   fontWeight: 600,
-                  color: "#0c0a09",
+                  color: colors.navy,
                   padding: "10px 22px",
-                  background: "linear-gradient(135deg, #d4a85c 0%, #c9943f 100%)",
+                  background: `linear-gradient(135deg, ${colors.gold} 0%, #C4956A 100%)`,
                   borderRadius: 100,
                   textDecoration: "none",
-                  boxShadow: "0 2px 12px rgba(212, 168, 92, 0.4)",
-                  transition: "all 0.2s",
+                  boxShadow: "0 2px 12px rgba(212, 165, 116, 0.4)",
                 }}
               >
                 Get Started
@@ -115,18 +170,17 @@ export default function Home() {
       </header>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          HERO SECTION - Dark
+          HERO SECTION
           ══════════════════════════════════════════════════════════════════════ */}
       <section
         style={{
           position: "relative",
           paddingTop: 160,
-          paddingBottom: 120,
-          background: "linear-gradient(180deg, #0c0a09 0%, #1c1917 100%)",
+          paddingBottom: 100,
+          background: `linear-gradient(180deg, ${colors.navy} 0%, ${colors.navyLight} 100%)`,
           overflow: "hidden",
         }}
       >
-        {/* Subtle grid pattern */}
         <div
           style={{
             position: "absolute",
@@ -135,7 +189,6 @@ export default function Home() {
             backgroundSize: "40px 40px",
           }}
         />
-        {/* Gold gradient glow */}
         <div
           style={{
             position: "absolute",
@@ -144,95 +197,60 @@ export default function Home() {
             transform: "translateX(-50%)",
             width: "80%",
             height: "500px",
-            background: "radial-gradient(ellipse at center, rgba(212, 168, 92, 0.12) 0%, transparent 70%)",
+            background: `radial-gradient(ellipse at center, rgba(212, 165, 116, 0.15) 0%, transparent 70%)`,
             pointerEvents: "none",
           }}
         />
 
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", position: "relative" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
-            {/* Left Content */}
             <div>
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "6px 14px",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  letterSpacing: "0.05em",
-                  textTransform: "uppercase",
-                  color: "#d4a85c",
-                  background: "rgba(212, 168, 92, 0.1)",
-                  border: "1px solid rgba(212, 168, 92, 0.2)",
-                  borderRadius: 100,
-                  marginBottom: 28,
-                }}
-              >
-                <span
-                  style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: "50%",
-                    background: "#d4a85c",
-                    boxShadow: "0 0 8px rgba(212, 168, 92, 0.6)",
-                  }}
-                />
-                Built for Personal Injury Firms
-              </div>
-
               <h1
-                className="font-display"
                 style={{
-                  fontSize: 64,
-                  lineHeight: 1.05,
+                  fontSize: 58,
+                  fontWeight: 700,
+                  lineHeight: 1.08,
                   letterSpacing: "-0.03em",
-                  color: "#fafaf9",
+                  color: "#FAFAFA",
                   marginBottom: 28,
+                  ...fadeUp(0.3),
                 }}
               >
-                Win more cases.{" "}
-                <span
-                  style={{
-                    background: "linear-gradient(135deg, #d4a85c 0%, #f5d799 50%, #d4a85c 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                  }}
-                >
-                  Settle faster.
+                Find any document in seconds with{" "}
+                <span className="shimmer-text">
+                  AI-powered search.
                 </span>
               </h1>
 
               <p
                 style={{
-                  fontSize: 19,
+                  fontSize: 18,
                   lineHeight: 1.7,
-                  color: "#a8a29e",
+                  color: colors.muted,
                   maxWidth: 480,
                   marginBottom: 40,
+                  ...fadeUp(0.4),
                 }}
               >
-                The case management system that helps PI attorneys qualify better cases, hit every statute deadline, and
-                move from intake to settlement 2× faster.
+                Aliva uses AI to summarize complex legal documents, search through convoluted databases, and surface the information your team needs — instantly.
               </p>
 
-              <div style={{ display: "flex", gap: 16, marginBottom: 48 }}>
+              <div style={{ display: "flex", gap: 16, marginBottom: 48, ...fadeUp(0.5) }}>
                 <a
                   href="#"
+                  className="hover-lift"
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
                     gap: 10,
                     fontSize: 15,
                     fontWeight: 600,
-                    color: "#0c0a09",
+                    color: colors.navy,
                     padding: "16px 32px",
-                    background: "linear-gradient(135deg, #d4a85c 0%, #c9943f 100%)",
+                    background: `linear-gradient(135deg, ${colors.gold} 0%, #C4956A 100%)`,
                     borderRadius: 100,
                     textDecoration: "none",
-                    boxShadow: "0 4px 20px rgba(212, 168, 92, 0.4)",
-                    transition: "all 0.3s",
+                    boxShadow: "0 4px 20px rgba(212, 165, 116, 0.4)",
                   }}
                 >
                   Start Free Trial
@@ -242,19 +260,19 @@ export default function Home() {
                 </a>
                 <a
                   href="#"
+                  className="hover-scale"
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
                     gap: 8,
                     fontSize: 15,
                     fontWeight: 600,
-                    color: "#fafaf9",
+                    color: "#FAFAFA",
                     padding: "16px 32px",
                     background: "rgba(255,255,255,0.05)",
                     border: "1px solid rgba(255,255,255,0.1)",
                     borderRadius: 100,
                     textDecoration: "none",
-                    transition: "all 0.3s",
                   }}
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -264,7 +282,7 @@ export default function Home() {
                 </a>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 16, ...fadeUp(0.6) }}>
                 <div style={{ display: "flex" }}>
                   {[0, 1, 2, 3].map((i) => (
                     <div
@@ -273,163 +291,162 @@ export default function Home() {
                         width: 36,
                         height: 36,
                         borderRadius: "50%",
-                        background: `linear-gradient(135deg, hsl(${38 - i * 8}, 60%, ${55 - i * 8}%) 0%, hsl(${38 - i * 8}, 70%, ${45 - i * 8}%) 100%)`,
-                        border: "2px solid #1c1917",
+                        background: `linear-gradient(135deg, hsl(${30 - i * 5}, 50%, ${60 - i * 8}%) 0%, hsl(${30 - i * 5}, 60%, ${50 - i * 8}%) 100%)`,
+                        border: `2px solid ${colors.navyLight}`,
                         marginLeft: i > 0 ? -10 : 0,
                       }}
                     />
                   ))}
                 </div>
                 <div>
-                  <p style={{ fontSize: 14, color: "#fafaf9", fontWeight: 600 }}>500+ PI firms trust Aliva</p>
-                  <p style={{ fontSize: 13, color: "#78716c" }}>From solo practitioners to AmLaw 200</p>
+                  <p style={{ fontSize: 14, color: "#FAFAFA", fontWeight: 600 }}>Trusted by PI firms nationwide</p>
+                  <p style={{ fontSize: 13, color: colors.muted }}>From solo practitioners to multi-attorney firms</p>
                 </div>
               </div>
             </div>
 
-            {/* Right - Dashboard Preview */}
+            {/* Dashboard Preview */}
             <div
+              className="float-animation"
               style={{
                 background: "rgba(255,255,255,0.02)",
                 border: "1px solid rgba(255,255,255,0.06)",
                 borderRadius: 20,
                 padding: 4,
                 boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+                ...slideInRight(0.4),
               }}
             >
-              <div
-                style={{
-                  background: "#fafaf9",
-                  borderRadius: 16,
-                  overflow: "hidden",
-                }}
-              >
-                {/* Browser Bar */}
+              <div style={{ background: colors.background, borderRadius: 16, overflow: "hidden" }}>
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
                     gap: 8,
                     padding: "12px 16px",
-                    background: "#f4f2ef",
-                    borderBottom: "1px solid #e7e5e4",
+                    background: colors.secondary,
+                    borderBottom: `1px solid ${colors.border}`,
                   }}
                 >
                   <div style={{ display: "flex", gap: 6 }}>
-                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f57" }} />
-                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#febc2e" }} />
-                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#28c840" }} />
+                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FF5F57" }} />
+                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FEBC2E" }} />
+                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#28C840" }} />
                   </div>
                   <div
                     style={{
                       flex: 1,
                       marginLeft: 12,
                       padding: "6px 14px",
-                      background: "#fff",
+                      background: colors.card,
                       borderRadius: 8,
                       fontSize: 12,
-                      color: "#a8a29e",
-                      border: "1px solid #e7e5e4",
+                      color: colors.muted,
+                      border: `1px solid ${colors.border}`,
                     }}
                   >
-                    app.aliva.legal/dashboard
+                    app.aliva.legal/documents
                   </div>
                 </div>
 
-                {/* Dashboard Content */}
-                <div style={{ padding: 20, background: "#fafaf9" }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 16 }}>
-                    {[
-                      { label: "Active PI Cases", value: "147", change: "+12%", up: true },
-                      { label: "Pending Intake", value: "23", change: "8 urgent", up: false },
-                      { label: "Pipeline Value", value: "$4.2M", change: "+18%", up: true },
-                    ].map((stat) => (
-                      <div
-                        key={stat.label}
-                        style={{
-                          background: "#fff",
-                          padding: 14,
-                          borderRadius: 12,
-                          border: "1px solid #e7e5e4",
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontSize: 10,
-                            color: "#a8a29e",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.04em",
-                            marginBottom: 4,
-                          }}
-                        >
-                          {stat.label}
-                        </div>
-                        <div style={{ fontSize: 24, fontWeight: 700, color: "#1c1917" }}>{stat.value}</div>
-                        <div
-                          style={{
-                            fontSize: 11,
-                            color: stat.up ? "#16a34a" : "#d4a85c",
-                            fontWeight: 600,
-                          }}
-                        >
-                          {stat.change}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
+                <div style={{ padding: 20, background: colors.background }}>
+                  {/* Search Bar */}
                   <div
                     style={{
-                      background: "#fff",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      padding: "14px 18px",
+                      background: colors.card,
                       borderRadius: 12,
-                      border: "1px solid #e7e5e4",
-                      overflow: "hidden",
+                      border: `1px solid ${colors.border}`,
+                      marginBottom: 16,
                     }}
                   >
-                    <div
-                      style={{
-                        padding: "12px 16px",
-                        borderBottom: "1px solid #e7e5e4",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span style={{ fontSize: 13, fontWeight: 600, color: "#1c1917" }}>Recent PI Cases</span>
-                      <span style={{ fontSize: 11, color: "#d4a85c", fontWeight: 600 }}>View All →</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={colors.gold} strokeWidth="2">
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="M21 21l-4.35-4.35" />
+                    </svg>
+                    <span style={{ fontSize: 14, color: colors.muted }}>Search medical records for treatment timeline...</span>
+                    <span style={{ marginLeft: "auto", padding: "4px 8px", background: colors.goldLight, borderRadius: 6, fontSize: 11, fontWeight: 600, color: colors.accentText }}>AI</span>
+                  </div>
+
+                  {/* AI Summary Card */}
+                  <div
+                    style={{
+                      padding: 16,
+                      background: `linear-gradient(135deg, ${colors.goldLight} 0%, rgba(254, 243, 231, 0.5) 100%)`,
+                      borderRadius: 12,
+                      border: "1px solid rgba(212, 165, 116, 0.2)",
+                      marginBottom: 16,
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={colors.gold} strokeWidth="2">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                      </svg>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: colors.accentText }}>AI Summary</span>
                     </div>
+                    <p style={{ fontSize: 13, lineHeight: 1.6, color: colors.foreground }}>
+                      Found <strong>23 documents</strong> across 3 providers. Key finding: Treatment began 48hrs post-accident with ER visit, followed by 12 PT sessions over 8 weeks.
+                    </p>
+                  </div>
+
+                  {/* Document Results */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     {[
-                      { name: "Martinez v. Acme Corp", type: "Auto Accident", value: "$340K", status: "Discovery" },
-                      { name: "Johnson Slip & Fall", type: "Premises Liability", value: "$125K", status: "Negotiation" },
-                      { name: "Smith Medical Injury", type: "Med Malpractice", value: "$890K", status: "Review" },
-                    ].map((c, i) => (
+                      { name: "ER_Admission_Report.pdf", type: "Medical Record", date: "Mar 15, 2024", relevance: 98 },
+                      { name: "PT_Progress_Notes.pdf", type: "Treatment Notes", date: "Apr 22, 2024", relevance: 94 },
+                      { name: "MRI_Lumbar_Spine.pdf", type: "Imaging", date: "Mar 18, 2024", relevance: 89 },
+                    ].map((doc, i) => (
                       <div
-                        key={c.name}
+                        key={doc.name}
+                        className="hover-scale"
                         style={{
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "space-between",
-                          padding: "12px 16px",
-                          borderBottom: i < 2 ? "1px solid #f4f2ef" : "none",
+                          padding: "12px 14px",
+                          background: colors.card,
+                          borderRadius: 10,
+                          border: `1px solid ${colors.border}`,
+                          cursor: "pointer",
+                          ...fadeIn(0.6 + i * 0.1),
                         }}
                       >
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                           <div
                             style={{
-                              width: 8,
-                              height: 8,
-                              borderRadius: "50%",
-                              background: i === 0 ? "#d4a85c" : "#16a34a",
+                              width: 32,
+                              height: 32,
+                              borderRadius: 8,
+                              background: colors.secondary,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
                             }}
-                          />
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={colors.slateWarm} strokeWidth="2">
+                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                              <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                            </svg>
+                          </div>
                           <div>
-                            <div style={{ fontSize: 13, fontWeight: 500, color: "#1c1917" }}>{c.name}</div>
-                            <div style={{ fontSize: 11, color: "#a8a29e" }}>{c.type}</div>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: colors.foreground }}>{doc.name}</div>
+                            <div style={{ fontSize: 11, color: colors.muted }}>{doc.type} · {doc.date}</div>
                           </div>
                         </div>
-                        <div style={{ textAlign: "right" }}>
-                          <div style={{ fontSize: 13, fontWeight: 600, color: "#1c1917" }}>{c.value}</div>
-                          <div style={{ fontSize: 11, color: "#78716c" }}>{c.status}</div>
+                        <div
+                          style={{
+                            padding: "4px 8px",
+                            borderRadius: 6,
+                            background: doc.relevance >= 95 ? "rgba(16, 185, 129, 0.1)" : "rgba(212, 165, 116, 0.1)",
+                            fontSize: 11,
+                            fontWeight: 600,
+                            color: doc.relevance >= 95 ? colors.success : colors.gold,
+                          }}
+                        >
+                          {doc.relevance}% match
                         </div>
                       </div>
                     ))}
@@ -442,103 +459,37 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          STATS BAR
+          SOCIAL PROOF
           ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ background: "#1c1917", borderTop: "1px solid rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "48px 24px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 32 }}>
-            {[
-              { value: "2.1×", label: "Faster case intake" },
-              { value: "31%", label: "Fewer missed deadlines" },
-              { value: "$48M+", label: "In PI cases tracked" },
-              { value: "500+", label: "PI firms nationwide" },
-            ].map((stat, i) => (
-              <div
-                key={stat.label}
-                style={{
-                  textAlign: "center",
-                  borderRight: i < 3 ? "1px solid rgba(255,255,255,0.08)" : "none",
-                }}
-              >
-                <p
-                  className="font-display"
-                  style={{
-                    fontSize: 48,
-                    color: "#d4a85c",
-                    lineHeight: 1,
-                    marginBottom: 8,
-                  }}
-                >
-                  {stat.value}
-                </p>
-                <p style={{ fontSize: 14, color: "#78716c" }}>{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          TRUSTED BY - Light Section
-          ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ padding: "80px 0", background: "#fafaf9" }}>
+      <section style={{ padding: "48px 0", background: colors.background, borderBottom: `1px solid ${colors.border}` }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
           <p
             style={{
               textAlign: "center",
               fontSize: 13,
               fontWeight: 600,
-              letterSpacing: "0.1em",
+              letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "#a8a29e",
-              marginBottom: 32,
+              color: colors.muted,
+              marginBottom: 24,
+              ...fadeIn(0.8),
             }}
           >
-            Trusted by leading personal injury firms
+            Trusted by personal injury firms
           </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 16 }}>
-            {[
-              "Morgan & Associates",
-              "Bellwether Legal",
-              "Pinnacle Law Group",
-              "Archer & Stone",
-              "Meridian Partners",
-              "Catalyst Legal",
-            ].map((firm) => (
-              <div
-                key={firm}
-                style={{
-                  padding: "24px 16px",
-                  background: "#fff",
-                  border: "1px solid #e7e5e4",
-                  borderRadius: 12,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: "#78716c",
-                  textAlign: "center",
-                  transition: "all 0.3s",
-                }}
-              >
-                {firm}
-              </div>
+          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 32 }}>
+            {["Morgan & Associates", "Bellwether Legal", "Pinnacle Law Group", "Archer & Stone", "Meridian Partners"].map((firm, i) => (
+              <span key={firm} style={{ fontSize: 14, fontWeight: 600, color: colors.slateWarm, ...fadeIn(0.9 + i * 0.05) }}>{firm}</span>
             ))}
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          WORKFLOW SECTION - Dark
+          HOW IT WORKS
           ══════════════════════════════════════════════════════════════════════ */}
-      <section id="workflows" style={{ padding: "120px 0", background: "#0c0a09", position: "relative" }}>
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.02) 1px, transparent 0)`,
-            backgroundSize: "48px 48px",
-          }}
-        />
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", position: "relative" }}>
+      <section id="how-it-works" style={{ padding: "100px 0", background: colors.background }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
           <div style={{ textAlign: "center", maxWidth: 640, margin: "0 auto 64px" }}>
             <div
               style={{
@@ -550,216 +501,91 @@ export default function Home() {
                 fontWeight: 600,
                 letterSpacing: "0.05em",
                 textTransform: "uppercase",
-                color: "#d4a85c",
-                background: "rgba(212, 168, 92, 0.1)",
-                border: "1px solid rgba(212, 168, 92, 0.2)",
+                color: colors.accentText,
+                background: colors.goldLight,
+                border: "1px solid rgba(212, 165, 116, 0.2)",
                 borderRadius: 100,
                 marginBottom: 20,
               }}
             >
               How It Works
             </div>
-            <h2
-              className="font-display"
-              style={{ fontSize: 48, color: "#fafaf9", letterSpacing: "-0.02em", marginBottom: 20 }}
-            >
-              From intake to settlement,{" "}
-              <span style={{ color: "#d4a85c" }}>streamlined</span>
+            <h2 style={{ fontSize: 44, fontWeight: 700, color: colors.foreground, letterSpacing: "-0.02em", marginBottom: 20 }}>
+              From chaos to clarity in three steps
             </h2>
-            <p style={{ fontSize: 18, color: "#a8a29e", lineHeight: 1.7 }}>
-              Three powerful workflows designed specifically for how PI attorneys work.
+            <p style={{ fontSize: 17, color: colors.slateWarm, lineHeight: 1.7, marginBottom: 24 }}>
+              Stop digging through folders. Aliva&apos;s AI understands your documents and finds exactly what you need.
             </p>
+            <Link
+              href="/features"
+              className="hover-scale"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                fontSize: 15,
+                fontWeight: 600,
+                color: colors.gold,
+                textDecoration: "none",
+              }}
+            >
+              See all 30+ features
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </Link>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
             {[
-              {
-                number: "01",
-                title: "Smart PI Intake",
-                description:
-                  "AI scores incoming leads based on case potential, liability factors, and your firm's criteria. High-value auto accidents and med mal cases surface first.",
-                icon: (
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d4a85c" strokeWidth="1.5">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
-                ),
-              },
-              {
-                number: "02",
-                title: "Case Dashboard",
-                description:
-                  "Track every PI case from first call to final settlement. See deadlines, statute dates, treatment status, and demand timelines at a glance.",
-                icon: (
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d4a85c" strokeWidth="1.5">
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <path d="M3 9h18M9 21V9" />
-                  </svg>
-                ),
-              },
-              {
-                number: "03",
-                title: "Document Hub",
-                description:
-                  "All medical records, police reports, and demand packages in one place. AI-powered search finds what you need across your entire caseload.",
-                icon: (
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d4a85c" strokeWidth="1.5">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
-                  </svg>
-                ),
-              },
-            ].map((step, i) => (
+              { step: "01", title: "Connect Your Sources", desc: "Link your document storage — cloud drives, case management systems, or local folders. Aliva indexes everything securely.", icon: "M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" },
+              { step: "02", title: "Search in Plain English", desc: "Ask questions like \"find all medical records from Dr. Smith\" or \"show me the accident photos\". No complex queries needed.", icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" },
+              { step: "03", title: "Get AI Summaries", desc: "Aliva reads and summarizes documents instantly — treatment timelines, key findings, and relevant details at a glance.", icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
+            ].map((item, i) => (
               <div
-                key={step.title}
+                key={item.step}
+                className="hover-lift"
                 style={{
-                  background: "rgba(255,255,255,0.02)",
-                  border: "1px solid rgba(255,255,255,0.06)",
+                  background: colors.card,
+                  border: `1px solid ${colors.border}`,
                   borderRadius: 20,
-                  padding: 36,
+                  padding: 32,
                   position: "relative",
-                  transition: "all 0.4s",
+                  overflow: "hidden",
                 }}
               >
                 <div
-                  className="font-display"
                   style={{
                     position: "absolute",
-                    right: 20,
-                    top: 20,
-                    fontSize: 72,
-                    fontWeight: 400,
-                    color: "rgba(255,255,255,0.03)",
+                    top: 24,
+                    right: 24,
+                    fontSize: 64,
+                    fontWeight: 800,
+                    color: colors.secondary,
                     lineHeight: 1,
                   }}
                 >
-                  {step.number}
+                  {item.step}
                 </div>
-
                 <div
                   style={{
                     width: 56,
                     height: 56,
                     borderRadius: 14,
-                    background: "rgba(212, 168, 92, 0.1)",
-                    border: "1px solid rgba(212, 168, 92, 0.2)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: 24,
-                  }}
-                >
-                  {step.icon}
-                </div>
-
-                <h3
-                  className="font-display"
-                  style={{ fontSize: 24, color: "#fafaf9", marginBottom: 12, position: "relative" }}
-                >
-                  {step.title}
-                </h3>
-                <p style={{ fontSize: 15, lineHeight: 1.7, color: "#78716c", position: "relative" }}>
-                  {step.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          FEATURES SECTION - Light
-          ══════════════════════════════════════════════════════════════════════ */}
-      <section id="product" style={{ padding: "120px 0", background: "#fafaf9" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
-          <div style={{ textAlign: "center", maxWidth: 640, margin: "0 auto 64px" }}>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "6px 14px",
-                fontSize: 12,
-                fontWeight: 600,
-                letterSpacing: "0.05em",
-                textTransform: "uppercase",
-                color: "#b07d2a",
-                background: "#fef8f0",
-                border: "1px solid #f5e0b8",
-                borderRadius: 100,
-                marginBottom: 20,
-              }}
-            >
-              Features
-            </div>
-            <h2
-              className="font-display"
-              style={{ fontSize: 48, color: "#1c1917", letterSpacing: "-0.02em", marginBottom: 20 }}
-            >
-              Everything your PI firm needs
-            </h2>
-            <p style={{ fontSize: 18, color: "#57534e", lineHeight: 1.7 }}>
-              Purpose-built tools for personal injury case management.
-            </p>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
-            {[
-              {
-                title: "PI Intake Queue",
-                description: "Auto-sort leads by case value, injury severity, and liability strength. Focus on cases that matter.",
-              },
-              {
-                title: "Statute Alerts",
-                description: "Never miss a filing deadline. Get alerts for every statute of limitations across all your PI cases.",
-              },
-              {
-                title: "Treatment Tracking",
-                description: "Monitor client treatment progress. Know when medical records are ready for demand.",
-              },
-              {
-                title: "Demand Builder",
-                description: "Generate demand packages with medical summaries, damages calculations, and liability analysis.",
-              },
-              {
-                title: "Settlement Tracker",
-                description: "Track negotiations, log offers, and manage lien resolutions all in one place.",
-              },
-              {
-                title: "PI Analytics",
-                description: "See your firm's performance: avg settlement time, case values by type, and conversion rates.",
-              },
-            ].map((cap) => (
-              <div
-                key={cap.title}
-                style={{
-                  background: "#fff",
-                  border: "1px solid #e7e5e4",
-                  borderRadius: 16,
-                  padding: 28,
-                  transition: "all 0.3s",
-                }}
-              >
-                <div
-                  style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 12,
-                    background: "linear-gradient(135deg, #fef8f0 0%, #fdf4e3 100%)",
-                    border: "1px solid #f5e0b8",
+                    background: colors.goldLight,
+                    border: "1px solid rgba(212, 165, 116, 0.2)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     marginBottom: 20,
                   }}
                 >
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b07d2a" strokeWidth="2">
-                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={colors.gold} strokeWidth="1.5">
+                    <path d={item.icon} />
                   </svg>
                 </div>
-                <h3 style={{ fontSize: 18, fontWeight: 600, color: "#1c1917", marginBottom: 8 }}>{cap.title}</h3>
-                <p style={{ fontSize: 15, lineHeight: 1.7, color: "#57534e" }}>{cap.description}</p>
+                <h3 style={{ fontSize: 20, fontWeight: 600, color: colors.foreground, marginBottom: 12 }}>{item.title}</h3>
+                <p style={{ fontSize: 15, lineHeight: 1.7, color: colors.slateWarm }}>{item.desc}</p>
               </div>
             ))}
           </div>
@@ -767,115 +593,146 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          OUTCOMES SECTION - Dark
+          FEATURES
           ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ padding: "120px 0", background: "#0c0a09" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              background: "rgba(255,255,255,0.02)",
-              border: "1px solid rgba(255,255,255,0.06)",
-              borderRadius: 24,
-              overflow: "hidden",
-            }}
-          >
-            <div style={{ padding: 56 }}>
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "6px 14px",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  letterSpacing: "0.05em",
-                  textTransform: "uppercase",
-                  color: "#d4a85c",
-                  background: "rgba(212, 168, 92, 0.1)",
-                  border: "1px solid rgba(212, 168, 92, 0.2)",
-                  borderRadius: 100,
-                  marginBottom: 24,
-                }}
-              >
-                Results
-              </div>
-              <h2
-                className="font-display"
-                style={{ fontSize: 40, color: "#fafaf9", lineHeight: 1.2, marginBottom: 32 }}
-              >
-                Less time on admin.
-                <br />
-                <span style={{ color: "#d4a85c" }}>More time winning cases.</span>
-              </h2>
-
-              <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 20 }}>
-                {[
-                  "AI reduces intake triage time by 70%",
-                  "Automatic statute deadline tracking",
-                  "Smart case prioritization by value",
-                  "Real-time settlement pipeline view",
-                ].map((item, i) => (
-                  <li key={i} style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                    <div
-                      style={{
-                        width: 24,
-                        height: 24,
-                        borderRadius: "50%",
-                        background: "rgba(22, 163, 74, 0.15)",
-                        border: "1px solid rgba(22, 163, 74, 0.3)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexShrink: 0,
-                      }}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="3">
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
-                    </div>
-                    <span style={{ fontSize: 16, color: "#a8a29e" }}>{item}</span>
-                  </li>
-                ))}
-              </ul>
+      <section id="features" style={{ padding: "100px 0", background: colors.navy, position: "relative" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.02) 1px, transparent 0)`, backgroundSize: "48px 48px" }} />
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", position: "relative" }}>
+          <div style={{ textAlign: "center", maxWidth: 640, margin: "0 auto 64px" }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", fontSize: 12, fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", color: colors.gold, background: "rgba(212, 165, 116, 0.1)", border: "1px solid rgba(212, 165, 116, 0.2)", borderRadius: 100, marginBottom: 20 }}>
+              Features
             </div>
+            <h2 style={{ fontSize: 44, fontWeight: 700, color: "#FAFAFA", letterSpacing: "-0.02em", marginBottom: 20 }}>Everything your PI firm needs</h2>
+            <p style={{ fontSize: 17, color: colors.muted, lineHeight: 1.7, marginBottom: 20 }}>Powerful AI tools designed specifically for personal injury documentation.</p>
+            <Link
+              href="/features"
+              className="hover-lift"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                fontSize: 14,
+                fontWeight: 600,
+                color: colors.navy,
+                padding: "12px 24px",
+                background: colors.gold,
+                borderRadius: 100,
+                textDecoration: "none",
+              }}
+            >
+              View All Features
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
 
-            <div style={{ padding: 56, background: "rgba(212, 168, 92, 0.05)" }}>
-              <p
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+            {[
+              { title: "AI Document Search", description: "Search across thousands of documents using natural language. Find exactly what you need in seconds." },
+              { title: "Instant Summaries", description: "Get AI-generated summaries of medical records, depositions, and legal documents — no more manual review." },
+              { title: "Smart Organization", description: "Aliva automatically categorizes and tags documents by type, date, provider, and relevance to your case." },
+              { title: "Treatment Timelines", description: "Automatically extract and visualize treatment histories from medical records across multiple providers." },
+              { title: "Cross-Reference Detection", description: "AI identifies connections between documents — matching dates, providers, and referenced events." },
+              { title: "Secure Collaboration", description: "Share documents and summaries with your team. Role-based access keeps sensitive info protected." },
+            ].map((feature, i) => (
+              <div
+                key={feature.title}
+                className="hover-lift"
                 style={{
-                  fontSize: 12,
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                  color: "#78716c",
-                  marginBottom: 28,
+                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  borderRadius: 16,
+                  padding: 28,
+                  transition: "all 0.3s ease",
                 }}
               >
-                PI Firm Results
-              </p>
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(212, 165, 116, 0.1)", border: "1px solid rgba(212, 165, 116, 0.2)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={colors.gold} strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+                </div>
+                <h3 style={{ fontSize: 17, fontWeight: 600, color: "#FAFAFA", marginBottom: 8 }}>{feature.title}</h3>
+                <p style={{ fontSize: 14, lineHeight: 1.7, color: colors.muted }}>{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      {/* ══════════════════════════════════════════════════════════════════════
+          AI DEMO SECTION
+          ══════════════════════════════════════════════════════════════════════ */}
+      <section style={{ padding: "100px 0", background: colors.background }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
+            <div>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", fontSize: 12, fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", color: colors.accentText, background: colors.goldLight, border: "1px solid rgba(212, 165, 116, 0.2)", borderRadius: 100, marginBottom: 20 }}>
+                AI Summaries
+              </div>
+              <h2 style={{ fontSize: 40, fontWeight: 700, color: colors.foreground, letterSpacing: "-0.02em", marginBottom: 20 }}>Stop reading every page manually</h2>
+              <p style={{ fontSize: 17, color: colors.slateWarm, lineHeight: 1.7, marginBottom: 32 }}>Aliva&apos;s AI reads and understands your documents, extracting key information so you don&apos;t have to.</p>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 {[
-                  { value: "+28%", label: "Higher case acceptance", color: "#16a34a" },
-                  { value: "-35%", label: "Faster response time", color: "#d4a85c" },
-                  { value: "+22%", label: "Settlement velocity", color: "#16a34a" },
-                ].map((kpi) => (
-                  <div
-                    key={kpi.label}
-                    style={{
-                      padding: "24px 28px",
-                      background: "rgba(255,255,255,0.03)",
-                      border: "1px solid rgba(255,255,255,0.06)",
-                      borderRadius: 16,
-                    }}
-                  >
-                    <span className="font-display" style={{ fontSize: 40, color: kpi.color }}>
-                      {kpi.value}
-                    </span>
-                    <p style={{ marginTop: 4, fontSize: 15, color: "#78716c" }}>{kpi.label}</p>
+                  { title: "Medical Record Analysis", desc: "Extracts diagnoses, treatments, and provider information automatically" },
+                  { title: "Deposition Highlights", desc: "Identifies key admissions, contradictions, and important testimony" },
+                  { title: "Billing Review", desc: "Summarizes charges, flags duplicates, and calculates totals" },
+                  { title: "Correspondence Tracking", desc: "Tracks communications, deadlines, and action items across letters and emails" },
+                ].map((item) => (
+                  <div key={item.title} className="hover-scale" style={{ display: "flex", alignItems: "flex-start", gap: 14, padding: 16, background: colors.card, borderRadius: 12, border: `1px solid ${colors.border}`, cursor: "pointer" }}>
+                    <div style={{ width: 24, height: 24, borderRadius: "50%", background: "rgba(16, 185, 129, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 2 }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={colors.success} strokeWidth="3"><path d="M20 6L9 17l-5-5" /></svg>
+                    </div>
+                    <div>
+                      <p style={{ fontSize: 15, fontWeight: 600, color: colors.foreground, marginBottom: 2 }}>{item.title}</p>
+                      <p style={{ fontSize: 13, color: colors.muted }}>{item.desc}</p>
+                    </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            <div
+              className="float-animation"
+              style={{
+                background: colors.card,
+                border: `1px solid ${colors.border}`,
+                borderRadius: 20,
+                padding: 28,
+                boxShadow: "0 20px 60px rgba(0,0,0,0.08)",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+                <div style={{ padding: 8, borderRadius: 10, background: colors.goldLight }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={colors.gold} strokeWidth="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <path d="M14 2v6h6" />
+                  </svg>
+                </div>
+                <div>
+                  <p style={{ fontSize: 15, fontWeight: 600, color: colors.foreground }}>ER_Admission_Martinez.pdf</p>
+                  <p style={{ fontSize: 12, color: colors.muted }}>Medical Record · 24 pages</p>
+                </div>
+                <span style={{ marginLeft: "auto", padding: "6px 12px", background: colors.goldLight, borderRadius: 8, fontSize: 12, fontWeight: 600, color: colors.accentText }}>AI Summary</span>
+              </div>
+
+              <div style={{ padding: 20, background: colors.secondary, borderRadius: 14, marginBottom: 20 }}>
+                <p style={{ fontSize: 14, lineHeight: 1.8, color: colors.foreground }}>
+                  <strong>Patient:</strong> Roberto Martinez, 42M<br />
+                  <strong>Date of Service:</strong> March 15, 2024<br />
+                  <strong>Chief Complaint:</strong> MVA with neck and back pain<br />
+                  <strong>Diagnosis:</strong> Cervical strain, lumbar radiculopathy<br />
+                  <strong>Treatment:</strong> CT scan (negative for fracture), prescribed muscle relaxants, referred to PT<br />
+                  <strong>Follow-up:</strong> Orthopedic consult recommended in 2 weeks
+                </p>
+              </div>
+
+              <div style={{ display: "flex", gap: 12 }}>
+                <button className="hover-scale" style={{ flex: 1, padding: "12px 16px", background: colors.gold, color: colors.navy, border: "none", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+                  View Full Document
+                </button>
+                <button className="hover-scale" style={{ flex: 1, padding: "12px 16px", background: colors.secondary, color: colors.foreground, border: `1px solid ${colors.border}`, borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+                  Export Summary
+                </button>
               </div>
             </div>
           </div>
@@ -883,120 +740,54 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          SECURITY + TESTIMONIAL - Light
+          SECURITY
           ══════════════════════════════════════════════════════════════════════ */}
-      <section id="security" style={{ padding: "120px 0", background: "#fafaf9" }}>
+      <section id="security" style={{ padding: "100px 0", background: colors.navy }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 24 }}>
-            <div
-              style={{
-                background: "#fff",
-                border: "1px solid #e7e5e4",
-                borderRadius: 20,
-                padding: 48,
-              }}
-            >
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "6px 14px",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  letterSpacing: "0.05em",
-                  textTransform: "uppercase",
-                  color: "#b07d2a",
-                  background: "#fef8f0",
-                  border: "1px solid #f5e0b8",
-                  borderRadius: 100,
-                  marginBottom: 20,
-                }}
-              >
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+            <div className="hover-lift" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 20, padding: 48 }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", fontSize: 12, fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", color: colors.gold, background: "rgba(212, 165, 116, 0.1)", border: "1px solid rgba(212, 165, 116, 0.2)", borderRadius: 100, marginBottom: 20 }}>
                 Security
               </div>
-              <h2 className="font-display" style={{ fontSize: 36, color: "#1c1917", marginBottom: 16 }}>
-                Your client data, protected
-              </h2>
-              <p style={{ fontSize: 16, color: "#57534e", lineHeight: 1.7, marginBottom: 32 }}>
-                PI firms handle sensitive client information. We take security seriously with enterprise-grade protection.
-              </p>
+              <h2 style={{ fontSize: 36, fontWeight: 700, color: "#FAFAFA", marginBottom: 16 }}>Your documents, protected</h2>
+              <p style={{ fontSize: 16, color: colors.muted, lineHeight: 1.7, marginBottom: 32 }}>PI firms handle sensitive client information. Aliva is built with enterprise-grade security from day one.</p>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 24 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }}>
                 {[
-                  { title: "Data Isolation", desc: "Your data never shared" },
-                  { title: "HIPAA Compliant", desc: "Medical records secure" },
                   { title: "SOC 2 Type II", desc: "Certified compliance" },
-                  { title: "AES-256", desc: "Bank-level encryption" },
+                  { title: "HIPAA Compliant", desc: "Healthcare privacy standards" },
+                  { title: "ISO 27001", desc: "Certified security management" },
+                  { title: "AES-256 Encryption", desc: "Data at rest & in transit" },
+                  { title: "Role-Based Access", desc: "Granular permissions" },
+                  { title: "Audit Logging", desc: "Full activity tracking" },
                 ].map((item) => (
                   <div key={item.title} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-                    <div
-                      style={{
-                        marginTop: 2,
-                        width: 20,
-                        height: 20,
-                        borderRadius: "50%",
-                        background: "#fef8f0",
-                        border: "1px solid #f5e0b8",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexShrink: 0,
-                      }}
-                    >
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#b07d2a" strokeWidth="3">
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
+                    <div style={{ marginTop: 2, width: 20, height: 20, borderRadius: "50%", background: "rgba(16, 185, 129, 0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={colors.success} strokeWidth="3"><path d="M20 6L9 17l-5-5" /></svg>
                     </div>
                     <div>
-                      <p style={{ fontWeight: 600, fontSize: 15, color: "#1c1917" }}>{item.title}</p>
-                      <p style={{ fontSize: 13, color: "#78716c" }}>{item.desc}</p>
+                      <p style={{ fontWeight: 600, fontSize: 14, color: "#FAFAFA" }}>{item.title}</p>
+                      <p style={{ fontSize: 13, color: colors.muted }}>{item.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div
-              style={{
-                background: "linear-gradient(135deg, #1c1917 0%, #0c0a09 100%)",
-                borderRadius: 20,
-                padding: 48,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-              }}
-            >
+            <div className="hover-lift" style={{ background: `linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(212, 165, 116, 0.05) 100%)`, border: "1px solid rgba(212, 165, 116, 0.2)", borderRadius: 20, padding: 48, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
               <div>
-                <svg
-                  style={{ width: 48, height: 48, color: "rgba(212, 168, 92, 0.3)", marginBottom: 24 }}
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
+                <svg style={{ width: 48, height: 48, color: "rgba(212, 165, 116, 0.4)", marginBottom: 24 }} viewBox="0 0 24 24" fill="currentColor">
                   <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                 </svg>
-
-                <p
-                  className="font-display"
-                  style={{ fontSize: 22, lineHeight: 1.6, fontStyle: "italic", color: "#fafaf9" }}
-                >
-                  &ldquo;Aliva transformed how we handle PI intake. We went from drowning in leads to focusing only on
-                  cases worth pursuing. Our settlement volume is up 40%.&rdquo;
+                <p style={{ fontSize: 22, lineHeight: 1.6, fontStyle: "italic", color: "#FAFAFA" }}>
+                  &ldquo;We used to spend hours searching for documents. Now Aliva finds everything in seconds and summarizes it for us. It&apos;s changed how we prepare cases.&rdquo;
                 </p>
               </div>
-
               <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 32 }}>
-                <div
-                  style={{
-                    width: 52,
-                    height: 52,
-                    borderRadius: "50%",
-                    background: "linear-gradient(135deg, #d4a85c 0%, #b8860b 100%)",
-                  }}
-                />
+                <div style={{ width: 52, height: 52, borderRadius: "50%", background: `linear-gradient(135deg, ${colors.gold} 0%, #B8860B 100%)` }} />
                 <div>
-                  <p style={{ fontWeight: 600, fontSize: 16, color: "#fafaf9" }}>Sarah Mitchell</p>
-                  <p style={{ fontSize: 14, color: "#78716c" }}>Managing Partner, Mitchell PI Law</p>
+                  <p style={{ fontWeight: 600, fontSize: 16, color: "#FAFAFA" }}>Sarah Mitchell</p>
+                  <p style={{ fontSize: 14, color: colors.muted }}>Managing Partner, Mitchell Law Group</p>
                 </div>
               </div>
             </div>
@@ -1005,116 +796,45 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          FAQ SECTION - Light
+          FAQ
           ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ padding: "120px 0", background: "#f4f2ef" }}>
+      <section style={{ padding: "100px 0", background: colors.background }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: 80 }}>
             <div>
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: "6px 14px",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  letterSpacing: "0.05em",
-                  textTransform: "uppercase",
-                  color: "#b07d2a",
-                  background: "#fff",
-                  border: "1px solid #f5e0b8",
-                  borderRadius: 100,
-                  marginBottom: 20,
-                }}
-              >
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", fontSize: 12, fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", color: colors.accentText, background: colors.goldLight, border: "1px solid rgba(212, 165, 116, 0.2)", borderRadius: 100, marginBottom: 20 }}>
                 FAQ
               </div>
-              <h2 className="font-display" style={{ fontSize: 40, color: "#1c1917", marginBottom: 16 }}>
-                Questions from PI firms
-              </h2>
-              <p style={{ fontSize: 16, color: "#57534e", lineHeight: 1.7 }}>
-                Everything you need to know about Aliva for your personal injury practice.
-              </p>
+              <h2 style={{ fontSize: 40, fontWeight: 700, color: colors.foreground, marginBottom: 16 }}>Common questions</h2>
+              <p style={{ fontSize: 16, color: colors.slateWarm, lineHeight: 1.7 }}>Everything you need to know about Aliva for your PI practice.</p>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {[
-                {
-                  question: "Is Aliva built specifically for PI firms?",
-                  answer:
-                    "Yes. Every feature is designed for personal injury workflows—from intake scoring based on liability and damages, to statute tracking, treatment monitoring, and settlement management.",
-                },
-                {
-                  question: "How long does it take to get started?",
-                  answer:
-                    "Most PI firms are fully operational in 2-3 weeks. We handle data migration from your existing system and provide hands-on training for your team.",
-                },
-                {
-                  question: "Can we start with just intake management?",
-                  answer:
-                    "Absolutely. Many firms start with our AI intake system to immediately improve lead qualification, then add case management features as they see results.",
-                },
-                {
-                  question: "Do you integrate with our existing tools?",
-                  answer:
-                    "Yes. Aliva integrates with popular PI firm tools including Clio, MyCase, PracticePanther, as well as medical record services and document management systems.",
-                },
+                { question: "How does the AI document search work?", answer: "Aliva uses advanced natural language processing to understand your documents. You can search using plain English queries like \"find all medical records from March 2024\" or \"show me documents mentioning surgery\". The AI understands context and finds relevant results even if the exact words aren't present." },
+                { question: "What types of documents can Aliva process?", answer: "Aliva handles all common document formats including PDFs, Word documents, images (with OCR), scanned documents, and more. It's particularly optimized for medical records, legal documents, correspondence, and billing statements common in PI cases." },
+                { question: "Is my data secure?", answer: "Absolutely. We use AES-256 encryption for all data at rest and in transit. We're SOC 2 Type II certified, and your documents are never used to train our AI models. You maintain full ownership and control of your data." },
+                { question: "How accurate are the AI summaries?", answer: "Our AI is specifically trained on legal and medical documents, achieving over 95% accuracy on key information extraction. Every summary includes source references so you can verify the original text." },
               ].map((faq, i) => (
-                <div
-                  key={faq.question}
-                  style={{
-                    background: "#fff",
-                    border: "1px solid #e7e5e4",
-                    borderRadius: 16,
-                    overflow: "hidden",
-                  }}
-                >
+                <div key={faq.question} className="hover-scale" style={{ background: colors.card, border: `1px solid ${colors.border}`, borderRadius: 16, overflow: "hidden" }}>
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      width: "100%",
-                      padding: "22px 28px",
-                      fontSize: 16,
-                      fontWeight: 600,
-                      color: "#1c1917",
-                      background: "transparent",
-                      border: "none",
-                      cursor: "pointer",
-                      textAlign: "left",
-                    }}
+                    style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "20px 24px", fontSize: 16, fontWeight: 600, color: colors.foreground, background: "transparent", border: "none", cursor: "pointer", textAlign: "left" }}
                   >
                     <span>{faq.question}</span>
-                    <span
-                      style={{
-                        width: 28,
-                        height: 28,
-                        borderRadius: "50%",
-                        background: openFaq === i ? "#fef8f0" : "#f4f2ef",
-                        border: openFaq === i ? "1px solid #f5e0b8" : "1px solid #e7e5e4",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        transition: "all 0.3s",
-                        transform: openFaq === i ? "rotate(180deg)" : "none",
-                        flexShrink: 0,
-                        marginLeft: 16,
-                      }}
-                    >
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#57534e" strokeWidth="2">
-                        <path d="M2 4l4 4 4-4" />
-                      </svg>
+                    <span style={{ width: 28, height: 28, borderRadius: "50%", background: openFaq === i ? colors.goldLight : colors.secondary, border: openFaq === i ? "1px solid rgba(212, 165, 116, 0.2)" : `1px solid ${colors.border}`, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.3s", transform: openFaq === i ? "rotate(180deg)" : "none", flexShrink: 0, marginLeft: 16 }}>
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke={colors.slateWarm} strokeWidth="2"><path d="M2 4l4 4 4-4" /></svg>
                     </span>
                   </button>
-
-                  {openFaq === i && (
-                    <div style={{ padding: "0 28px 22px" }}>
-                      <p style={{ fontSize: 15, lineHeight: 1.7, color: "#57534e" }}>{faq.answer}</p>
+                  <div style={{
+                    maxHeight: openFaq === i ? 200 : 0,
+                    overflow: "hidden",
+                    transition: "max-height 0.3s ease"
+                  }}>
+                    <div style={{ padding: "0 24px 20px" }}>
+                      <p style={{ fontSize: 15, lineHeight: 1.7, color: colors.slateWarm }}>{faq.answer}</p>
                     </div>
-                  )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -1123,159 +843,76 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          CTA SECTION - Dark
+          CTA
           ══════════════════════════════════════════════════════════════════════ */}
-      <section style={{ padding: "120px 0", background: "#0c0a09", position: "relative" }}>
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "100%",
-            height: "100%",
-            background: "radial-gradient(ellipse at center, rgba(212, 168, 92, 0.08) 0%, transparent 60%)",
-            pointerEvents: "none",
-          }}
-        />
-        <div style={{ maxWidth: 800, margin: "0 auto", padding: "0 24px", textAlign: "center", position: "relative" }}>
-          <h2
-            className="font-display"
-            style={{ fontSize: 56, color: "#fafaf9", letterSpacing: "-0.02em", marginBottom: 20 }}
-          >
-            Ready to win more{" "}
-            <span
-              style={{
-                background: "linear-gradient(135deg, #d4a85c 0%, #f5d799 50%, #d4a85c 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              PI cases?
-            </span>
-          </h2>
-          <p style={{ fontSize: 19, color: "#a8a29e", marginBottom: 40, maxWidth: 500, margin: "0 auto 40px" }}>
-            Join 500+ personal injury firms using Aliva to streamline intake, hit deadlines, and settle faster.
-          </p>
+      <section style={{ padding: "100px 0", background: colors.navy, position: "relative" }}>
+        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "100%", height: "100%", background: "radial-gradient(ellipse at center, rgba(212, 165, 116, 0.08) 0%, transparent 60%)", pointerEvents: "none" }} />
+        <div style={{ maxWidth: 700, margin: "0 auto", padding: "0 24px", textAlign: "center", position: "relative" }}>
+          <h2 style={{ fontSize: 48, fontWeight: 700, color: "#FAFAFA", letterSpacing: "-0.02em", marginBottom: 20 }}>Stop searching. Start finding.</h2>
+          <p style={{ fontSize: 18, color: colors.muted, marginBottom: 40, lineHeight: 1.7 }}>Let Aliva&apos;s AI handle the document chaos. Try it free for 14 days.</p>
 
           <div style={{ display: "flex", justifyContent: "center", gap: 16 }}>
-            <a
-              href="#"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 10,
-                fontSize: 16,
-                fontWeight: 600,
-                color: "#0c0a09",
-                padding: "18px 36px",
-                background: "linear-gradient(135deg, #d4a85c 0%, #c9943f 100%)",
-                borderRadius: 100,
-                textDecoration: "none",
-                boxShadow: "0 4px 24px rgba(212, 168, 92, 0.4)",
-              }}
-            >
+            <a href="#" className="hover-lift" style={{ display: "inline-flex", alignItems: "center", gap: 10, fontSize: 16, fontWeight: 600, color: colors.navy, padding: "18px 36px", background: `linear-gradient(135deg, ${colors.gold} 0%, #C4956A 100%)`, borderRadius: 100, textDecoration: "none", boxShadow: "0 4px 24px rgba(212, 165, 116, 0.4)" }}>
               Start Free Trial
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </a>
-            <a
-              href="#"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                fontSize: 16,
-                fontWeight: 600,
-                color: "#fafaf9",
-                padding: "18px 36px",
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: 100,
-                textDecoration: "none",
-              }}
-            >
-              Schedule Demo
-            </a>
+            <a href="#" className="hover-scale" style={{ display: "inline-flex", alignItems: "center", fontSize: 16, fontWeight: 600, color: "#FAFAFA", padding: "18px 36px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 100, textDecoration: "none" }}>Schedule Demo</a>
           </div>
 
-          <p style={{ marginTop: 24, fontSize: 14, color: "#57534e" }}>
-            No credit card required · 14-day free trial · Setup in minutes
-          </p>
+          <p style={{ marginTop: 24, fontSize: 14, color: colors.slateWarm }}>No credit card required · 14-day free trial</p>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
           FOOTER
           ══════════════════════════════════════════════════════════════════════ */}
-      <footer style={{ borderTop: "1px solid rgba(255,255,255,0.06)", padding: "64px 0", background: "#0c0a09" }}>
+      <footer style={{ borderTop: "1px solid rgba(255,255,255,0.06)", padding: "64px 0", background: colors.navy }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
           <div style={{ display: "grid", gridTemplateColumns: "2fr repeat(4, 1fr)", gap: 48 }}>
             <div>
-              <a href="#" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-                <div
-                  style={{
-                    width: 38,
-                    height: 38,
-                    borderRadius: 10,
-                    background: "linear-gradient(135deg, #d4a85c 0%, #b8860b 100%)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <span style={{ color: "white", fontWeight: 700, fontSize: 17 }}>A</span>
-                </div>
-                <span className="font-display" style={{ fontSize: 24, color: "#fafaf9" }}>
-                  Aliva
-                </span>
-              </a>
-              <p style={{ marginTop: 16, fontSize: 14, color: "#57534e", maxWidth: 280, lineHeight: 1.7 }}>
-                The case management system built exclusively for personal injury law firms.
-              </p>
+              <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+                <Logo className="h-24 w-auto" />
+              </Link>
+              <p style={{ marginTop: 16, fontSize: 14, color: colors.slateWarm, maxWidth: 280, lineHeight: 1.7 }}>AI-powered document search and summaries for personal injury law firms.</p>
             </div>
 
             {[
-              { title: "Product", links: ["Features", "Integrations", "Security", "Pricing"] },
-              { title: "Company", links: ["About", "Careers", "Blog"] },
-              { title: "Resources", links: ["Documentation", "Help Center", "API"] },
-              { title: "Legal", links: ["Privacy", "Terms", "HIPAA"] },
+              { title: "Product", links: [
+                { name: "Features", href: "/features" },
+                { name: "Pricing", href: "/pricing" },
+                { name: "Security", href: "#security" },
+                { name: "Integrations", href: "#" },
+              ]},
+              { title: "Company", links: [
+                { name: "About", href: "#" },
+                { name: "Careers", href: "#" },
+                { name: "Blog", href: "#" },
+              ]},
+              { title: "Resources", links: [
+                { name: "Documentation", href: "#" },
+                { name: "Help Center", href: "#" },
+              ]},
+              { title: "Legal", links: [
+                { name: "Privacy", href: "#" },
+                { name: "Terms", href: "#" },
+              ]},
             ].map((col) => (
               <div key={col.title}>
-                <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 20, color: "#fafaf9" }}>{col.title}</h4>
+                <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 20, color: "#FAFAFA" }}>{col.title}</h4>
                 <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 12 }}>
                   {col.links.map((link) => (
-                    <li key={link}>
-                      <a href="#" style={{ fontSize: 14, color: "#57534e", textDecoration: "none" }}>
-                        {link}
-                      </a>
-                    </li>
+                    <li key={link.name}><Link href={link.href} className="hover-scale" style={{ fontSize: 14, color: colors.slateWarm, textDecoration: "none", display: "inline-block" }}>{link.name}</Link></li>
                   ))}
                 </ul>
               </div>
             ))}
           </div>
 
-          <div
-            style={{
-              marginTop: 64,
-              paddingTop: 24,
-              borderTop: "1px solid rgba(255,255,255,0.06)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              fontSize: 13,
-              color: "#57534e",
-            }}
-          >
-            <p>&copy; {new Date().getFullYear()} Aliva Legal Technology. All rights reserved.</p>
+          <div style={{ marginTop: 64, paddingTop: 24, borderTop: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 13, color: colors.slateWarm }}>
+            <p>&copy; {new Date().getFullYear()} Aliva Technologies LLC. All rights reserved.</p>
             <div style={{ display: "flex", gap: 24 }}>
-              <a href="#" style={{ color: "#57534e", textDecoration: "none" }}>
-                Privacy Policy
-              </a>
-              <a href="#" style={{ color: "#57534e", textDecoration: "none" }}>
-                Terms of Service
-              </a>
+              <a href="#" className="hover-scale" style={{ color: colors.slateWarm, textDecoration: "none" }}>Privacy Policy</a>
+              <a href="#" className="hover-scale" style={{ color: colors.slateWarm, textDecoration: "none" }}>Terms of Service</a>
             </div>
           </div>
         </div>
