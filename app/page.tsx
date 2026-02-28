@@ -866,7 +866,7 @@ export default function Home() {
       {/* ══════════════════════════════════════════════════════════════════════
           FOOTER
           ══════════════════════════════════════════════════════════════════════ */}
-      <footer style={{ borderTop: "1px solid rgba(255,255,255,0.06)", padding: "64px 0", background: colors.navy }}>
+      <footer style={{ borderTop: "1px solid rgba(255,255,255,0.15)", padding: "64px 0", background: colors.navy }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
           <div style={{ display: "grid", gridTemplateColumns: "2fr repeat(4, 1fr)", gap: 48 }}>
             <div>
@@ -908,7 +908,7 @@ export default function Home() {
             ))}
           </div>
 
-          <div style={{ marginTop: 64, paddingTop: 24, borderTop: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 13, color: colors.slateWarm }}>
+          <div style={{ marginTop: 64, paddingTop: 24, borderTop: "1px solid rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 13, color: colors.slateWarm }}>
             <p>&copy; {new Date().getFullYear()} Aliva Technologies LLC. All rights reserved.</p>
             <div style={{ display: "flex", gap: 24 }}>
               <a href="#" className="hover-scale" style={{ color: colors.slateWarm, textDecoration: "none" }}>Privacy Policy</a>
